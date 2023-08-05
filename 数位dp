@@ -1,0 +1,38 @@
+数位dp
+介绍：
+	数位dp用于在区间[left,right]内的数字的数位从高到低进行枚举，统计满足条件的数的个数
+	
+思路
+	dp（i：int,is_limit: bool,is_num: bool)->int:
+		l i: int 表示构造第i位及其之后的数位的合法方案数
+		l is_limit: bool 表示是否收到n（题目的区间[left,right]）的约束
+			§ 如果为真，则表示当前数位的范围应该大于 left 的第[i]个数位并 小于 right 的第[i]数位（为了把合法数限制在区间[left,right]内）
+			§ 如果为假，则表示在0~9之间任取一位 
+		l is_num: bool 表示前面是否有数位，即是否已经填了一个数字
+			§ 如果为真，则往后合法法的都为真
+			§ 如果为假，则往后的合法数都为假，此时表示这个数位一定小于right，并且当前位可以跳过（不填数字），或者要填入的数字至少为 1；
+				例如 n=123，在 i=0时跳过的话，相当于后面要构造的是一个 999999 以内的数字了，如果 i=1不跳过，那么相当于构造一个 101010 到 999999 的两位数，如果 i=1 也跳过，相当于构造的是一个 999 以内的数字。
+	可以适当添加别的参数构造dp函数
+		l count：int  计算在构造合法数中某个重复的数字的个数
+		l pre： int 表示前一个数字
+		l vis：int表示已经出现过的数字合集（可用位运算辅助计算）
+实现：
+	1.  枚举从s[0]开始
+	2. 一开始收到n的约束
+	3. 一开始没有填写数字
+	初始状态：dp (0,True,False)
+	递归中：
+	
+	def f(i:int,isNum:bool,isLimit:bool)->int:
+	     if i == len(s):
+	        return int(isNum)
+	        res = 0
+	        if not isNum :
+	           res = f(i+1,False,False)
+	        low = 0 if isNum else 1
+	        up = int(s[i]) if isLimit else 9
+	        for n in range(low,up+1):
+	          if 满足条件:
+	             res += f(i+1,n,True,isLimit and n == up)
+	        return res%mod
+	
